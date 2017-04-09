@@ -18,6 +18,7 @@ This package provides basic support for type inference friendly generic function
 - It only support standard function definition with return type annotated.
 - Parametric functions are not supported.
 - It uses `Dict` for cache, not `ObjectIdDict`.
+- Require Julia v0.6.
 
 
 ## Exposed Verbs
