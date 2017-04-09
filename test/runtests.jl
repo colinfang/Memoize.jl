@@ -11,9 +11,10 @@ end
 end
 
 @test fib(3) == 3
-@test fib(1.0, 5) = 6
+@test fib(1.0, 5) == 6
+@test Base.return_types(fib, (Int,)) == [Int]
 
-clear_cache()
+clear_cache(fib)
 
 function Memoize.make_key(::typeof(fib), x, y)
    x

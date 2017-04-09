@@ -134,24 +134,24 @@ macro memoize(f)
     parameter_names = esc.(pn)
     parameter_types = esc.(pt)
 
-    key = esc(:key)
     cache = esc(:cache)
+    key = esc(:key)
     func_cache = get!(Dict{Tuple, Dict}, CACHE, (current_module(), func_ast.func_name))
-    global_cache = gensym(:cache)
 
     func_ast.func_name = :unmemoized
     func_ast.parameters = []
     unmemoized = esc(compose(func_ast))
 
     quote
-        pt = ($(parameter_types...),)
-        const global $global_cache = get!(Dict{Any, $return_type}, $func_cache, pt)
-
-        function $func_name($(parameters...))::$return_type
-            $unmemoized
-            $key = make_key($func_name, $(parameter_names...))
-            $cache = $(esc(global_cache))
-            get!($(esc(:unmemoized)), $cache, $key)
+        let
+            local pt = ($(parameter_types...),)
+            local $cache = get!(Dict{Any, $return_type}, $func_cache, pt)
+            global $func_name
+            function $func_name($(parameters...))::$return_type
+                $unmemoized
+                $key = make_key($func_name, $(parameter_names...))
+                get!($(esc(:unmemoized)), $cache, $key)
+            end
         end
     end
 end
